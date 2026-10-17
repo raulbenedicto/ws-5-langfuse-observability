@@ -33,10 +33,17 @@ def load_truth() -> dict[str, dict]:
 
 
 def agent_env() -> dict[str, str]:
-    if os.environ.get("HELIX_AGENT_PROVIDER") == "openrouter":
+    provider = os.environ.get("HELIX_AGENT_PROVIDER")
+    if provider == "openrouter":
         return {
             "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
             "ANTHROPIC_AUTH_TOKEN": os.environ["OPENROUTER_API_KEY"],
+            "ANTHROPIC_API_KEY": "",
+        }
+    if provider == "subscription":
+        # The CLI prefers ANTHROPIC_API_KEY over the OAuth token, so blank it for the agent only.
+        return {
+            "CLAUDE_CODE_OAUTH_TOKEN": os.environ["CLAUDE_CODE_OAUTH_TOKEN"],
             "ANTHROPIC_API_KEY": "",
         }
     return {}
